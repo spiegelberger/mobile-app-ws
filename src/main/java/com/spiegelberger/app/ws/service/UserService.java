@@ -8,5 +8,8 @@ import com.spiegelberger.app.ws.shared.dto.UserDto;
 
 public interface UserService extends UserDetailsService{
 
-	public UserDto createUser(UserDto user);
+	UserDto createUser(UserDto user);
+	
+	UserDto getUser(String email);
+	
 }
