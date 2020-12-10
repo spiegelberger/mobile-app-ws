@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.spiegelberger.app.ws.exceptions.UserServiceException;
 import com.spiegelberger.app.ws.service.UserService;
 import com.spiegelberger.app.ws.shared.dto.UserDto;
 import com.spiegelberger.app.ws.ui.model.request.UserDetailsRequestModel;
+import com.spiegelberger.app.ws.ui.model.response.ErrorMessages;
 import com.spiegelberger.app.ws.ui.model.response.UserRest;
 
 @RestController
@@ -28,7 +30,7 @@ public class UserController {
 		produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
 	public UserRest getUser(@PathVariable String id) {
 		
-		UserRest returnValue = new UserRest();
+		UserRest returnValue = new UserRest();		
 		
 		UserDto userDto = userService.getUserByUserId(id);
 		BeanUtils.copyProperties(userDto, returnValue);
@@ -36,10 +38,15 @@ public class UserController {
 		return returnValue;
 	}
 	
+	
+	
 	@PostMapping(
 			consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
 			produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-	public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) {
+	public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails)throws Exception {
+		
+		if(userDetails.getFirstName().isEmpty()) throw new 
+			NullPointerException("The object is null");
 		
 		UserRest returnValue=new UserRest();
 		UserDto userDto=new UserDto();
