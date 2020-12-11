@@ -10,11 +10,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.spiegelberger.app.ws.exceptions.UserServiceException;
 import com.spiegelberger.app.ws.io.entity.UserEntity;
 import com.spiegelberger.app.ws.io.repositories.UserRepository;
 import com.spiegelberger.app.ws.service.UserService;
 import com.spiegelberger.app.ws.shared.Utils;
 import com.spiegelberger.app.ws.shared.dto.UserDto;
+import com.spiegelberger.app.ws.ui.model.response.ErrorMessages;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -73,7 +75,7 @@ public class UserServiceImpl implements UserService {
 		
 		UserEntity  userEntity = userRepository.findByEmail(email);
 			if (userEntity == null) {
-				throw new UsernameNotFoundException(email);
+				throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
 			}
 			
 		UserDto returnValue=new UserDto();
@@ -90,11 +92,31 @@ public class UserServiceImpl implements UserService {
 		
 		UserEntity userEntity = userRepository.findByUserId(id);
 			if (userEntity == null) {
-				throw new UsernameNotFoundException(id);
+				throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
 			}
 		
 		BeanUtils.copyProperties(userEntity, returnValue);
 		
+		
+		return returnValue;
+	}
+
+	@Override
+	public UserDto updateUser(String id, UserDto user) {
+
+		UserDto returnValue= new UserDto();
+		
+		UserEntity userEntity = userRepository.findByUserId(id);
+			if (userEntity == null) {
+				throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+			}
+			
+		userEntity.setFirstName(user.getFirstName());
+		userEntity.setLastName(user.getLastName());
+		
+		UserEntity updatedUserDetails = userRepository.save(userEntity);
+		
+		BeanUtils.copyProperties(updatedUserDetails, returnValue);
 		
 		return returnValue;
 	}
