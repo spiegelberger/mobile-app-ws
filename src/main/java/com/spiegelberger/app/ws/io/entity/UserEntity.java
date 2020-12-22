@@ -1,11 +1,14 @@
 package com.spiegelberger.app.ws.io.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -20,28 +23,30 @@ public class UserEntity implements Serializable{
 	@GeneratedValue
 	private long id;
 	
-	// public userid:
 	@Column(nullable=false)
 	private String userId;
-	
+
 	@Column(nullable=false, length=50)
 	private String firstName;
 	
 	@Column(nullable=false, length=50)
 	private String lastName;
 	
-	@Column(nullable=false, length=120, unique=true)
+	@Column(nullable=false, length=120)
 	private String email;
 	
-	//We do not store password in db without encryption!
 	@Column(nullable=false)
 	private String encryptedPassword;
 	
 	private String emailVerificationToken;
 	
 	@Column(nullable=false)
-	private Boolean emailVerificationStatus=false;
+	private Boolean emailVerificationStatus = false;
+	
+	@OneToMany(mappedBy="userDetails", cascade=CascadeType.ALL)
+	private List<AddressEntity> addresses;
 
+	
 	public long getId() {
 		return id;
 	}
@@ -104,6 +109,14 @@ public class UserEntity implements Serializable{
 
 	public void setEmailVerificationStatus(Boolean emailVerificationStatus) {
 		this.emailVerificationStatus = emailVerificationStatus;
+	}
+
+	public List<AddressEntity> getAddresses() {
+		return addresses;
+	}
+
+	public void setAddresses(List<AddressEntity> addresses) {
+		this.addresses = addresses;
 	}
 	
 	

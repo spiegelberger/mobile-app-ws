@@ -1,6 +1,7 @@
 package com.spiegelberger.app.ws.shared.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class UserDto implements Serializable{
 
@@ -8,7 +9,7 @@ public class UserDto implements Serializable{
 	private static final long serialVersionUID = -5974495421368688445L;
 	// Id from the database autoincremented:
 	private long id;
-	// public userid:
+	// public user id:
 	private String userId;
 	private String firstName;
 	private String lastName;
@@ -17,6 +18,7 @@ public class UserDto implements Serializable{
 	private String encryptedPassword;
 	private String emailVerificationToken;
 	private Boolean emailVerificationStatus=false;
+	private List<AddressDto>addresses;
 	
 	
 	public long getId() {
@@ -72,6 +74,18 @@ public class UserDto implements Serializable{
 	}
 	public void setEmailVerificationStatus(boolean emailVerificationStatus) {
 		this.emailVerificationStatus = emailVerificationStatus;
+	}
+	public Boolean getEmailVerificationStatus() {
+		return emailVerificationStatus;
+	}
+	public void setEmailVerificationStatus(Boolean emailVerificationStatus) {
+		this.emailVerificationStatus = emailVerificationStatus;
+	}
+	public List<AddressDto> getAddresses() {
+		return addresses;
+	}
+	public void setAddresses(List<AddressDto> addresses) {
+		this.addresses = addresses;
 	}
 	
 	

@@ -1,5 +1,6 @@
 package com.spiegelberger.app.ws.ui.model.request;
 
+import java.util.List;
 
 public class UserDetailsRequestModel {
 
@@ -7,7 +8,15 @@ public class UserDetailsRequestModel {
 	private String lastName;
 	private String email;
 	private String password;
+	private List<AddressRequestModel>addresses;
 	
+	
+	public List<AddressRequestModel> getAddresses() {
+		return addresses;
+	}
+	public void setAddresses(List<AddressRequestModel> addresses) {
+		this.addresses = addresses;
+	}
 	public String getFirstName() {
 		return firstName;
 	}
