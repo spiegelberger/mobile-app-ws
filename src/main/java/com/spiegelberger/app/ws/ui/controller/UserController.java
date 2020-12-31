@@ -1,9 +1,11 @@
 package com.spiegelberger.app.ws.ui.controller;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -17,9 +19,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.spiegelberger.app.ws.service.AddressService;
 import com.spiegelberger.app.ws.service.UserService;
+import com.spiegelberger.app.ws.shared.dto.AddressDto;
 import com.spiegelberger.app.ws.shared.dto.UserDto;
 import com.spiegelberger.app.ws.ui.model.request.UserDetailsRequestModel;
+import com.spiegelberger.app.ws.ui.model.response.AddressRest;
 import com.spiegelberger.app.ws.ui.model.response.OperationStatusModel;
 import com.spiegelberger.app.ws.ui.model.response.RequestOperationName;
 import com.spiegelberger.app.ws.ui.model.response.RequestOperationStatus;
@@ -31,6 +36,9 @@ public class UserController {
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	AddressService addressService;
 	
 	@GetMapping(path="/{id}",
 		produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
@@ -120,6 +128,22 @@ public class UserController {
 		
 		return returnValue;
 	}
-
 	
+	
+	@GetMapping(path = "/{id}/addresses",
+			produces = { MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE })
+	public List<AddressRest> getUserAddressess(@PathVariable String id) {
+
+		List<AddressRest>returnValue = new ArrayList<>();
+		
+		List<AddressDto> addressesDto = addressService.getAddresses(id);
+		
+		if (addressesDto != null && !addressesDto.isEmpty()) {
+			Type listType = new TypeToken<List<AddressRest>>() {}.getType();
+			returnValue = new ModelMapper().map(addressesDto, listType);
+			}
+
+		return returnValue;
+		
+	}
 }
