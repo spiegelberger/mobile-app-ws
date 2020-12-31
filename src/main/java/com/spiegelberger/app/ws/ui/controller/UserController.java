@@ -8,6 +8,8 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -151,12 +153,34 @@ public class UserController {
 	
 	@GetMapping(path = "/{userId}/addresses/{addressId}", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
-	public AddressRest getUserAddress(@PathVariable String addressId) {
+	public AddressRest getUserAddress(@PathVariable String addressId, @PathVariable String userId) {
 		
 		AddressDto addressesDto = addressService.getAddress(addressId);
 
 		ModelMapper modelMapper = new ModelMapper();
+		AddressRest returnValue=modelMapper.map(addressesDto, AddressRest.class);
 		
-		return modelMapper.map(addressesDto, AddressRest.class);
+//		HATEOAS:		
+//		http://localhost:8080/users/<userId>/addresses/{addressId}
+		Link userLink=WebMvcLinkBuilder.linkTo(UserController.class)
+				.slash(userId)
+				.withRel("user");
+		
+		Link userAddressesLink=WebMvcLinkBuilder.linkTo(UserController.class)
+				.slash(userId)
+				.slash("addreses")
+				.withRel("addreses");
+				
+		Link selfLink=WebMvcLinkBuilder.linkTo(UserController.class)
+				.slash(userId)
+				.slash("addresses")
+				.slash(addressId)
+				.withSelfRel();
+		
+		returnValue.add(userLink);
+		returnValue.add(userAddressesLink);
+		returnValue.add(selfLink);
+		
+		return returnValue;
 	}
 }
