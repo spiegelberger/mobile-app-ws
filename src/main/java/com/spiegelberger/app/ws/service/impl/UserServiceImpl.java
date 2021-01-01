@@ -59,13 +59,16 @@ public class UserServiceImpl implements UserService {
 		//Generating safe user information:
 		userEntity.setUserId(publicUserId);
 		userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+		userEntity.setEmailVerificationToken(utils.generateEmailVerificationToken(publicUserId));
+		userEntity.setEmailVerificationStatus(false);
 		
-		UserEntity storedUserDetails=userRepository.save(userEntity);
+		UserEntity storedUserDetails=userRepository.save(userEntity);		
 				
 		UserDto returnValue=modelMapper.map(storedUserDetails, UserDto.class);
 		
 		return returnValue;
 	}
+	
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -75,9 +78,13 @@ public class UserServiceImpl implements UserService {
 				throw new UsernameNotFoundException(email);
 			}
 			
-		return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
+//		Prevent users with unverified email address to login:		
+		return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), 
+				userEntity.getEmailVerificationStatus(), true, true, true,
+				new ArrayList<>());
 	}
 
+	
 	@Override
 	public UserDto getUser(String email) {
 		
@@ -93,6 +100,8 @@ public class UserServiceImpl implements UserService {
 		return returnValue;
 	}
 
+	
+	
 	@Override
 	public UserDto getUserByUserId(String id) {
 		
@@ -109,6 +118,8 @@ public class UserServiceImpl implements UserService {
 		return returnValue;
 	}
 
+	
+	
 	@Override
 	public UserDto updateUser(String id, UserDto user) {
 
@@ -129,6 +140,8 @@ public class UserServiceImpl implements UserService {
 		return returnValue;
 	}
 
+	
+	
 	@Override
 	public void deleteUser(String userId) {
 		
@@ -141,6 +154,8 @@ public class UserServiceImpl implements UserService {
 		
 	}
 
+	
+	
 	@Override
 	public List<UserDto> getUsers(int page, int limit) {
 		
@@ -165,4 +180,25 @@ public class UserServiceImpl implements UserService {
 		return returnValue;
 	}
 
+	
+	
+	@Override
+	public boolean verifyEmailToken(String token) {
+		
+		 boolean returnValue = false;
+
+	        // Find user by token then check token
+	        UserEntity userEntity = userRepository.findUserByEmailVerificationToken(token);
+
+	        if (userEntity != null) {
+	            boolean hastokenExpired = Utils.hasTokenExpired(token);
+	            if (!hastokenExpired) {
+	                userEntity.setEmailVerificationToken(null);
+	                userEntity.setEmailVerificationStatus(Boolean.TRUE);
+	                userRepository.save(userEntity);
+	                returnValue = true;
+	            	}
+	        }
+	      return returnValue;
+	}
 }
