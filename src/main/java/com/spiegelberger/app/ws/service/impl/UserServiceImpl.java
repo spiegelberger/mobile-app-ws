@@ -19,6 +19,7 @@ import com.spiegelberger.app.ws.exceptions.UserServiceException;
 import com.spiegelberger.app.ws.io.entity.UserEntity;
 import com.spiegelberger.app.ws.io.repositories.UserRepository;
 import com.spiegelberger.app.ws.service.UserService;
+import com.spiegelberger.app.ws.shared.AmazonSES;
 import com.spiegelberger.app.ws.shared.Utils;
 import com.spiegelberger.app.ws.shared.dto.AddressDto;
 import com.spiegelberger.app.ws.shared.dto.UserDto;
@@ -65,6 +66,9 @@ public class UserServiceImpl implements UserService {
 		UserEntity storedUserDetails=userRepository.save(userEntity);		
 				
 		UserDto returnValue=modelMapper.map(storedUserDetails, UserDto.class);
+		
+//		Send email to users to verify their email address
+		new AmazonSES().verifyEmail(returnValue);
 		
 		return returnValue;
 	}
