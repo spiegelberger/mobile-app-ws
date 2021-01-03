@@ -28,6 +28,8 @@ import com.spiegelberger.app.ws.service.AddressService;
 import com.spiegelberger.app.ws.service.UserService;
 import com.spiegelberger.app.ws.shared.dto.AddressDto;
 import com.spiegelberger.app.ws.shared.dto.UserDto;
+import com.spiegelberger.app.ws.ui.model.request.PasswordResetModel;
+import com.spiegelberger.app.ws.ui.model.request.PasswordResetRequestModel;
 import com.spiegelberger.app.ws.ui.model.request.UserDetailsRequestModel;
 import com.spiegelberger.app.ws.ui.model.response.AddressRest;
 import com.spiegelberger.app.ws.ui.model.response.OperationStatusModel;
@@ -202,6 +204,7 @@ public class UserController {
 	}
 	
 	
+	
 //		http://localhost:8080/mobile-app-ws/email-verification?token=sdfsdf
 		@GetMapping(path="/email-verification", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE})
@@ -222,4 +225,50 @@ public class UserController {
 			return returnValue;
 		}
 		
+		
+		 
+//	    http://localhost:8080/mobile-app-ws/users/password-reset-request	     
+	    @PostMapping(path = "/password-reset-request", 
+	            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+	            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+	    )
+	    public OperationStatusModel requestReset(@RequestBody PasswordResetRequestModel passwordResetRequestModel) {
+	    	OperationStatusModel returnValue = new OperationStatusModel();
+	 
+	        boolean operationResult = userService.requestPasswordReset(passwordResetRequestModel.getEmail());
+	        
+	        returnValue.setOperationName(RequestOperationName.REQUEST_PASSWORD_RESET.name());
+	        returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
+	 
+	        if(operationResult)
+	        {
+	            returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
+	        }
+
+	        return returnValue;
+	    }		
+		
+		
+	    
+	    @PostMapping(path = "/password-reset",
+	    			consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+	    )
+	    public OperationStatusModel resetPassword(@RequestBody PasswordResetModel passwordResetModel) {
+	    	OperationStatusModel returnValue = new OperationStatusModel();
+	 
+	        boolean operationResult = userService.resetPassword(
+	                passwordResetModel.getToken(),
+	                passwordResetModel.getPassword());
+	        
+	        returnValue.setOperationName(RequestOperationName.PASSWORD_RESET.name());
+	        returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
+	 
+	        if(operationResult)
+	        {
+	            returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
+	        }
+
+	        return returnValue;
+	    }
+
 }
