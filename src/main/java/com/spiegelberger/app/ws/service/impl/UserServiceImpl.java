@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
 		
 		//Check whether the user exists already
 		if(userRepository.findByEmail(user.getEmail())!=null) {
-				throw new RuntimeException("Record already exists");
+				throw new UserServiceException("Record already exists");
 		}
 		
 		for(int i=0; i<user.getAddresses().size();i++) {

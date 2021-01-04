@@ -67,7 +67,7 @@ class UserServiceImplTest {
 		userEntity.setLastName("Bucko");
 		userEntity.setUserId(userId);
 		userEntity.setEncryptedPassword(encryptedPassword);
-		userEntity.setEmail("zsoltspiegelberger@gmail.com");
+		userEntity.setEmail("test@test.com");
 		userEntity.setEmailVerificationToken("7rwfg456tfghhn");
 		userEntity.setAddresses(getAddressesEntity());
 	}
@@ -102,6 +102,25 @@ class UserServiceImplTest {
 					} );
 	}
 	
+	
+	
+	@Test
+	final void testCreateUser_UserServiceException() {
+		
+		when(userRepository.findByEmail(anyString())).thenReturn(userEntity);
+		
+		UserDto userDto = new UserDto();
+		userDto.setAddresses(getAddressesDto());
+		userDto.setFirstName("Beno");
+		userDto.setLastName("Bucko");
+		userDto.setPassword("12345678");
+		userDto.setEmail("test@test.com");
+		
+		assertThrows(UserServiceException.class,
+				()-> { 
+					userService.createUser(userDto); 
+					} );
+	}
 
 	
 	@Test
@@ -120,7 +139,7 @@ class UserServiceImplTest {
 		userDto.setFirstName("Beno");
 		userDto.setLastName("Bucko");
 		userDto.setPassword("12345678");
-		userDto.setEmail("zsoltspiegelberger@gmail.com");
+		userDto.setEmail("test@test.com");
 		
 		UserDto storedUserDetails = userService.createUser(userDto);
 		
