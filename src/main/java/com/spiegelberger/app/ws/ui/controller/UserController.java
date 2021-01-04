@@ -33,7 +33,6 @@ import com.spiegelberger.app.ws.ui.model.request.PasswordResetRequestModel;
 import com.spiegelberger.app.ws.ui.model.request.UserDetailsRequestModel;
 import com.spiegelberger.app.ws.ui.model.response.AddressRest;
 import com.spiegelberger.app.ws.ui.model.response.OperationStatusModel;
-import com.spiegelberger.app.ws.ui.model.response.RequestOperationName;
 import com.spiegelberger.app.ws.ui.model.response.RequestOperationStatus;
 import com.spiegelberger.app.ws.ui.model.response.UserRest;
 

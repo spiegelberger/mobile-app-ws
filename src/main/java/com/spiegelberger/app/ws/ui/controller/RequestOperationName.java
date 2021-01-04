@@ -1,4 +1,4 @@
-package com.spiegelberger.app.ws.ui.model.response;
+package com.spiegelberger.app.ws.ui.controller;
 
 public enum RequestOperationName {
 	
