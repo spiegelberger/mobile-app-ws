@@ -1,11 +1,10 @@
 package com.spiegelberger.app.ws.shared;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +39,27 @@ class UtilsTest {
 	
 	
 	@Test
-	@Disabled
-	void testHasTokenExpired() {
-		fail("Not yet implemented");
+	void testHasTokenNotExpired() {
+		
+		String token=utils.generateEmailVerificationToken("45gtrfd8j");
+		assertNotNull(token);
+		
+		boolean hasTokenExpired = Utils.hasTokenExpired(token);
+		
+		assertFalse(hasTokenExpired);
 	}
+	
+	
+	@Test
+	void testHasTokenExpired() {
+		
+		String expiredToken="eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtN3dsekk2ekltVHJHd1hIbEhvRzh1MVp1N09tNVEiLCJleHAiOjE2MTA2NTE4OTl9.uNUVMwFCa9mn7IN0Bl2s097kM3qVmpZw-UdIvdwGoip8UHzJjTzgCVSQO50_Ra2xjAbBYlXtl9ZM9iyCRWTs2g";
+	
+		boolean hasTokenExpired = Utils.hasTokenExpired(expiredToken);
+
+		assertTrue(hasTokenExpired);
+
+	}
+	
 
 }
