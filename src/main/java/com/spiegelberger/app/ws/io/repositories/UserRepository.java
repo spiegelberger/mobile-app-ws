@@ -1,5 +1,7 @@
 package com.spiegelberger.app.ws.io.repositories;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -17,8 +19,16 @@ public interface UserRepository extends PagingAndSortingRepository<UserEntity, L
 
 	UserEntity findUserByEmailVerificationToken(String token);
 	
+	
+	// Native SQL Queries practice
+	
 	@Query(value="select * from Users u where u.EMAIL_VERIFICATION_STATUS=true",
 			countQuery="select count(*) from Users u where u.EMAIL_VERIFICATION_STATUS=true", 
 			nativeQuery=true)
 	Page<UserEntity>findAllUsersWithConfirmedEmailAddress(Pageable pageableRequest);
+	
+	
+	// Query with Positional Parameters
+	@Query(value="select * from Users u where u.first_name = ?1", nativeQuery=true)
+	List<UserEntity>findUserByFirstName(String firstName);
 }
