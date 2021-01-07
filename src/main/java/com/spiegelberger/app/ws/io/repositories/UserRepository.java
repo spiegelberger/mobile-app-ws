@@ -61,4 +61,12 @@ public interface UserRepository extends PagingAndSortingRepository<UserEntity, L
 	void updateUserEmailVerificationStatus(
 			@Param("emailVerificationStatus")boolean emailVerificationStatus, @Param("userId")String userId
 			);
+	
+/*
+ * This simple method illustrates the usage of JPQL queries
+ */
+	//JPQL
+	@Query("select u from UserEntity u where u.userId=:userId")
+	UserEntity findUserEntityByUserId(@Param("userId")String userId);
+
 }

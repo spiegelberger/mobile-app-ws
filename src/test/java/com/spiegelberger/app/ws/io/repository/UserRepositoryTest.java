@@ -124,6 +124,8 @@ class UserRepositoryTest {
 		System.out.println("Last name = "+ userLastName);
 	}
 		
+	
+	
 		@Test
 		final void testUpdateUserEmailVerificationStatus() {
 			
@@ -137,6 +139,18 @@ class UserRepositoryTest {
 			assertTrue(storedEmailVerificationStatus==newEmailVerificationStatus);
 			
 		}
+		
+		
+		
+		@Test
+		final void testFindUserEntityByUserId() {
+			String userId = "123";
+			UserEntity userEntity = userRepository.findUserEntityByUserId(userId);
+			
+			assertNotNull(userEntity);
+			assertTrue(userEntity.getUserId().equals(userId));
+		}
+		
 		
 	
 	private void createRecords() {
