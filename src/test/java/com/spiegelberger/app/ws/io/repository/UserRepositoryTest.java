@@ -20,6 +20,7 @@ import com.spiegelberger.app.ws.io.entity.AddressEntity;
 import com.spiegelberger.app.ws.io.entity.UserEntity;
 import com.spiegelberger.app.ws.io.repositories.UserRepository;
 
+
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 class UserRepositoryTest {
@@ -152,8 +153,28 @@ class UserRepositoryTest {
 		}
 		
 		
+		
+		@Test
+		final void testGetUserEntityFullNameById() {
+			
+			String userId = "123";
+			List<Object[]>userEntityRecords = userRepository.getUserEntityFullNameById(userId);
+			
+			assertNotNull(userEntityRecords);
+			assertTrue(userEntityRecords.size()==1);
+			
+			Object[]userFullName = userEntityRecords.get(0);
+			String firstName = String.valueOf(userFullName[0]);
+			String lastName = String.valueOf(userFullName[1]);
+			
+			assertNotNull(firstName);
+			assertNotNull(lastName);
+			
+		}
 	
-	private void createRecords() {
+		
+		
+		private void createRecords() {
 		
 		 // Prepare User Entity
 	     UserEntity userEntity = new UserEntity();

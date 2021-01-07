@@ -34,9 +34,11 @@ public interface UserRepository extends PagingAndSortingRepository<UserEntity, L
 	Page<UserEntity>findAllUsersWithConfirmedEmailAddress(Pageable pageableRequest);
 	
 	
+	
 	// Query with Positional Parameters
 	@Query(value="select * from Users u where u.first_name = ?1", nativeQuery=true)
 	List<UserEntity>findUserByFirstName(String firstName);
+	
 	
 	
 	// Query with Named Parameters
@@ -44,14 +46,17 @@ public interface UserRepository extends PagingAndSortingRepository<UserEntity, L
 	List<UserEntity>findUserByLastName(@Param("lastName") String lastName);
 	
 	
+	
 	@Query(value="select * from Users u where first_name LIKE %:keyword% "
 								+ "	OR last_name LIKE %:keyword%", nativeQuery=true)
 	List<UserEntity>findUsersByKeyword(@Param("keyword")String keyword);
 	
 	
+	
 	@Query(value="select u.first_name, u.last_name from Users u where u.first_name LIKE %:keyword% "
 							+ "	OR u.last_name LIKE %:keyword%", nativeQuery=true)
 	List<Object[]>findUserFirstNameAndLastnameByKeyword(@Param("keyword")String keyword);
+	
 	
 	
 	@Transactional
@@ -62,11 +67,18 @@ public interface UserRepository extends PagingAndSortingRepository<UserEntity, L
 			@Param("emailVerificationStatus")boolean emailVerificationStatus, @Param("userId")String userId
 			);
 	
-/*
- * This simple method illustrates the usage of JPQL queries
- */
-	//JPQL
+	
+	
+	/*
+	 * The following methods illustrate the usage of JPQL queries
+	 */
+	
 	@Query("select u from UserEntity u where u.userId=:userId")
 	UserEntity findUserEntityByUserId(@Param("userId")String userId);
+	
+	
+	
+	@Query ("select u.firstName, u.lastName from UserEntity u where u.userId=:userId")
+	List<Object[]>getUserEntityFullNameById(@Param("userId")String userId);
 
 }
