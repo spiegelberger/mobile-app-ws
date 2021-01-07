@@ -124,7 +124,19 @@ class UserRepositoryTest {
 		System.out.println("Last name = "+ userLastName);
 	}
 		
-		
+		@Test
+		final void testUpdateUserEmailVerificationStatus() {
+			
+			boolean newEmailVerificationStatus=true;
+			userRepository.updateUserEmailVerificationStatus(newEmailVerificationStatus, "123");
+			
+			UserEntity storedUserDetails = userRepository.findByUserId("123");
+			
+			boolean storedEmailVerificationStatus = storedUserDetails.getEmailVerificationStatus();
+			
+			assertTrue(storedEmailVerificationStatus==newEmailVerificationStatus);
+			
+		}
 		
 	
 	private void createRecords() {
