@@ -36,6 +36,10 @@ import com.spiegelberger.app.ws.ui.model.response.OperationStatusModel;
 import com.spiegelberger.app.ws.ui.model.response.RequestOperationStatus;
 import com.spiegelberger.app.ws.ui.model.response.UserRest;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/users")	//http://localhost:8080/users
 public class UserController {
@@ -46,6 +50,12 @@ public class UserController {
 	@Autowired
 	AddressService addressService;
 	
+	
+	@ApiOperation(value="Get User Details Web Service Endpoint",
+				notes="${userContoller.GetUser.ApiOperation.Notes}")
+	@ApiImplicitParams(value = { 
+			@ApiImplicitParam(name="authorization", value="${userContoller.authorizationHeader.description}", paramType="header") 
+			})
 	@GetMapping(path="/{id}",
 		produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
 	public UserRest getUser(@PathVariable String id) {
@@ -59,7 +69,8 @@ public class UserController {
 	}
 	
 	
-	
+	@ApiOperation(value="Create User Web Service Endpoint",
+			notes="${userContoller.CreateUser.ApiOperation.Notes}")
 	@PostMapping(
 			consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
 			produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
@@ -82,7 +93,11 @@ public class UserController {
 	}
 	
 	
-	
+	@ApiOperation(value="Update User Web Service Endpoint",
+			notes="${userContoller.UdateUser.ApiOperation.Notes}")
+	@ApiImplicitParams(value = { 
+			@ApiImplicitParam(name="authorization", value="${userContoller.authorizationHeader.description}", paramType="header") 
+			})
 	@PutMapping(path="/{id}",
 		consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
 		produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
@@ -102,7 +117,11 @@ public class UserController {
 	}
 	
 	
-	
+	@ApiOperation(value="Delete User Web Service Endpoint",
+			notes="${userContoller.DeleteUser.ApiOperation.Notes}")
+	@ApiImplicitParams(value = { 
+			@ApiImplicitParam(name="authorization", value="${userContoller.authorizationHeader.description}", paramType="header") 
+			})
 	@DeleteMapping(path="/{id}",
 			produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
 	public OperationStatusModel deleteUser(@PathVariable String id) {
@@ -117,8 +136,11 @@ public class UserController {
 		return returnValue;
 	}
 	
-	
-	
+	@ApiOperation(value="Get User Details Web Service Endpoint",
+			notes="${userContoller.GetUsers.ApiOperation.Notes}")
+	@ApiImplicitParams(value = { 
+			@ApiImplicitParam(name="authorization", value="${userContoller.authorizationHeader.description}", paramType="header") 
+			})
 	@GetMapping(produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
 	public List<UserRest>getUsers(@RequestParam(value="page", defaultValue="0")int page,
 			@RequestParam(value="limit", defaultValue = "2")int limit){
@@ -135,7 +157,12 @@ public class UserController {
 		return returnValue;
 	}
 	
-//	http://localhost:8080/mobile-app-ws/users/<userId>/addresses
+	
+	@ApiOperation(value="Get User Addresses Web Service Endpoint",
+			notes="${userContoller.GetAddresses.ApiOperation.Notes}")
+	@ApiImplicitParams(value = { 
+			@ApiImplicitParam(name="authorization", value="${userContoller.authorizationHeader.description}", paramType="header") 
+			})
 	@GetMapping(path = "/{id}/addresses",
 			produces = { MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE })
 	public CollectionModel<AddressRest> getUserAddresses(@PathVariable String id) {
@@ -171,7 +198,11 @@ public class UserController {
 	}
 	
 	
-	
+	@ApiOperation(value="Get User Address Web Service Endpoint",
+			notes="${userContoller.GetAddress.ApiOperation.Notes}")
+	@ApiImplicitParams(value = { 
+			@ApiImplicitParam(name="authorization", value="${userContoller.authorizationHeader.description}", paramType="header") 
+			})
 	@GetMapping(path = "/{userId}/addresses/{addressId}", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
 	public EntityModel<AddressRest> getUserAddress(@PathVariable String addressId, @PathVariable String userId) {
@@ -204,6 +235,8 @@ public class UserController {
 	
 	
 	
+	@ApiOperation(value="Verify Email Token Web Service Endpoint",
+			notes="${userContoller.VerifyEmailToken.ApiOperation.Notes}")
 //		http://localhost:8080/mobile-app-ws/email-verification?token=sdfsdf
 		@GetMapping(path="/email-verification", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE})
@@ -225,7 +258,9 @@ public class UserController {
 		}
 		
 		
-		 
+		
+		@ApiOperation(value="Request Password Resest Web Service Endpoint",
+			notes="${userContoller.RequestReset.ApiOperation.Notes}")
 //	    http://localhost:8080/mobile-app-ws/users/password-reset-request	     
 	    @PostMapping(path = "/password-reset-request", 
 	            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
@@ -249,6 +284,8 @@ public class UserController {
 		
 		
 	    
+		@ApiOperation(value="Password Reset Web Service Endpoint",
+				notes="${userContoller.ResetPassword.ApiOperation.Notes}")
 	    @PostMapping(path = "/password-reset",
 	    			consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
 	    )

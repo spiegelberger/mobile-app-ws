@@ -32,6 +32,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter{
 			.antMatchers(HttpMethod.POST, SecurityConstants.PASSWORD_RESET_REQUEST_URL).permitAll()
 			.antMatchers(HttpMethod.POST, SecurityConstants.PASSWORD_RESET_URL).permitAll()
 			.antMatchers(SecurityConstants.H2_CONSOLE).permitAll()
+			.antMatchers("/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**").permitAll()
 			.anyRequest().authenticated()
 				.and()
 				.addFilter(getAuthenticationFilter())
