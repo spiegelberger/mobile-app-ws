@@ -1,6 +1,8 @@
 package com.spiegelberger.app.ws.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -9,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,9 +18,12 @@ import org.springframework.stereotype.Service;
 
 import com.spiegelberger.app.ws.exceptions.UserServiceException;
 import com.spiegelberger.app.ws.io.entity.PasswordResetTokenEntity;
+import com.spiegelberger.app.ws.io.entity.RoleEntity;
 import com.spiegelberger.app.ws.io.entity.UserEntity;
-import com.spiegelberger.app.ws.io.repositories.UserRepository;
 import com.spiegelberger.app.ws.io.repositories.PasswordResetTokenRepository;
+import com.spiegelberger.app.ws.io.repositories.RoleRepository;
+import com.spiegelberger.app.ws.io.repositories.UserRepository;
+import com.spiegelberger.app.ws.security.UserPrincipal;
 import com.spiegelberger.app.ws.service.UserService;
 import com.spiegelberger.app.ws.shared.AmazonSES;
 import com.spiegelberger.app.ws.shared.Utils;
@@ -41,6 +45,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	PasswordResetTokenRepository passwordResetTokenRepository;
+	
+	@Autowired
+	RoleRepository roleRepository;
 	
 	@Autowired
 	AmazonSES amazonSES;
@@ -71,6 +78,17 @@ public class UserServiceImpl implements UserService {
 		userEntity.setEmailVerificationToken(utils.generateEmailVerificationToken(publicUserId));
 		userEntity.setEmailVerificationStatus(false);
 		
+		//Set Roles
+		Collection<RoleEntity>roleEntities = new HashSet<>();
+		for(String role:user.getRoles()) {
+			RoleEntity roleEntity = roleRepository.findByName(role);
+			if(roleEntity!=null) {
+				roleEntities.add(roleEntity);
+			}
+		}
+		
+		userEntity.setRoles(roleEntities);
+		
 		UserEntity storedUserDetails=userRepository.save(userEntity);		
 				
 		UserDto returnValue=modelMapper.map(storedUserDetails, UserDto.class);
@@ -90,10 +108,12 @@ public class UserServiceImpl implements UserService {
 				throw new UsernameNotFoundException(email);
 			}
 			
+			return new UserPrincipal(userEntity);
+			
 //		Prevent users with unverified email address to login:		
-		return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), 
-				userEntity.getEmailVerificationStatus(), true, true, true,
-				new ArrayList<>());
+//		return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), 
+//				userEntity.getEmailVerificationStatus(), true, true, true,
+//				new ArrayList<>());
 	}
 
 	

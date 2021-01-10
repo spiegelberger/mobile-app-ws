@@ -3,6 +3,7 @@ package com.spiegelberger.app.ws.ui.controller;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -14,6 +15,8 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.spiegelberger.app.ws.service.AddressService;
 import com.spiegelberger.app.ws.service.UserService;
+import com.spiegelberger.app.ws.shared.Roles;
 import com.spiegelberger.app.ws.shared.dto.AddressDto;
 import com.spiegelberger.app.ws.shared.dto.UserDto;
 import com.spiegelberger.app.ws.ui.model.request.PasswordResetModel;
@@ -51,6 +55,8 @@ public class UserController {
 	AddressService addressService;
 	
 	
+	
+	@PostAuthorize("hasRole('ROLE_ADMIN') or returnObject.userId == principal.userId")
 	@ApiOperation(value="Get User Details Web Service Endpoint",
 				notes="${userContoller.GetUser.ApiOperation.Notes}")
 	@ApiImplicitParams(value = { 
@@ -84,6 +90,7 @@ public class UserController {
 //		 Copy the sourceObject into a target object:	
 		ModelMapper modelMapper = new ModelMapper();
 		UserDto userDto = modelMapper.map(userDetails, UserDto.class);
+		userDto.setRoles(new HashSet<>(Arrays.asList(Roles.ROLE_USER.name())));
 		
 		UserDto createdUser=userService.createUser(userDto);
 		
@@ -117,6 +124,10 @@ public class UserController {
 	}
 	
 	
+	//Only the Admin and the given user can delete
+	@PreAuthorize("hasRole('ROLE_ADMIN') or #id == principal.userId")
+//	@PreAuthorize("hasAuthority('DELETE_AUTHORITY')")
+//	@Secured("ROLE_ADMIN")
 	@ApiOperation(value="Delete User Web Service Endpoint",
 			notes="${userContoller.DeleteUser.ApiOperation.Notes}")
 	@ApiImplicitParams(value = { 

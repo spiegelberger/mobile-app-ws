@@ -2,23 +2,29 @@ package com.spiegelberger.app.ws.security;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.spiegelberger.app.ws.io.repositories.UserRepository;
 import com.spiegelberger.app.ws.service.UserService;
 
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled=true, prePostEnabled=true)
 public class WebSecurity extends WebSecurityConfigurerAdapter{
 
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final UserService userDetailsService;
+	private final UserRepository userRepository;
 	
-	public WebSecurity(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userDetailsService) {
+	public WebSecurity(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userDetailsService,
+			UserRepository userRepository) {
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 		this.userDetailsService = userDetailsService;
+		this.userRepository = userRepository;
 	}
 	
 	
@@ -33,10 +39,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter{
 			.antMatchers(HttpMethod.POST, SecurityConstants.PASSWORD_RESET_URL).permitAll()
 			.antMatchers(SecurityConstants.H2_CONSOLE).permitAll()
 			.antMatchers("/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**").permitAll()
+			// if we do not want to use Method level security than this is used:
+//			.antMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("DELETE_AUTHORITY")
 			.anyRequest().authenticated()
 				.and()
 				.addFilter(getAuthenticationFilter())
-				.addFilter(new AuthorizationFilter(authenticationManager()))
+				.addFilter(new AuthorizationFilter(authenticationManager(), userRepository))
 				.sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		

@@ -1,15 +1,22 @@
 package com.spiegelberger.app.ws.io.entity;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="users")
@@ -43,9 +50,17 @@ public class UserEntity implements Serializable{
 	@Column(nullable=false)
 	private Boolean emailVerificationStatus = false;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy="userDetails", cascade=CascadeType.ALL)
 	private List<AddressEntity> addresses;
 
+	//Cascade.PERSIST - If User is deleted the ROLE remains 
+	@ManyToMany(cascade= {CascadeType.PERSIST}, fetch = FetchType.EAGER)
+	@JoinTable(name="users_roles", 
+			joinColumns=@JoinColumn(name="users_id", referencedColumnName="id"), 
+			inverseJoinColumns=@JoinColumn(name="roles_id", referencedColumnName="id"))
+	private Collection<RoleEntity>roles;
+	
 	
 	public long getId() {
 		return id;
@@ -118,6 +133,16 @@ public class UserEntity implements Serializable{
 	public void setAddresses(List<AddressEntity> addresses) {
 		this.addresses = addresses;
 	}
+
+	public Collection<RoleEntity> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Collection<RoleEntity> roles) {
+		this.roles = roles;
+	}
+
+
 	
 	
 }
