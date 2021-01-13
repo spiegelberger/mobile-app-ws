@@ -8,8 +8,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-@Entity(name="addresses")
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
+@Table(name="addresses")
 public class AddressEntity implements Serializable{
 	
 
@@ -39,6 +43,7 @@ public class AddressEntity implements Serializable{
 	
 	@ManyToOne
 	@JoinColumn(name="users_id")
+	@JsonIgnore
 	private UserEntity userDetails;
 
 	public long getId() {

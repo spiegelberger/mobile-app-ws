@@ -50,7 +50,6 @@ public class UserEntity implements Serializable{
 	@Column(nullable=false)
 	private Boolean emailVerificationStatus = false;
 	
-	@JsonIgnore
 	@OneToMany(mappedBy="userDetails", cascade=CascadeType.ALL)
 	private List<AddressEntity> addresses;
 
